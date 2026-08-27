@@ -15,6 +15,13 @@ test('схема каждой записи полна', () => {
   }
 });
 
+test('у каждого имени есть аят с корректной ссылкой', () => {
+  for (const n of names) {
+    assert.ok(n.ayah && typeof n.ayah.text === 'string' && n.ayah.text.length > 10, `${n.id}.ayah.text`);
+    assert.match(n.ayah.ref, /^\d+:\d+(-\d+)?$/, `${n.id}.ayah.ref`);
+  }
+});
+
 test('id уникальны', () => {
   const ids = names.map(n => n.id);
   assert.equal(new Set(ids).size, ids.length);

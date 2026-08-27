@@ -84,10 +84,11 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   function layout() {
     for (let i = 0; i < TOTAL; i++) {
       const x = circ(i - offset) * SPACING;
-      beads[i].position.set(x, catY(x), 0);
       const active = Math.abs(circ(i - target)) < 0.5;
       const pair = i + 1 === pairIdCur;
-      const sc = active ? BEAD_SCALE * 1.3 : pair ? BEAD_SCALE * 1.12 : BEAD_SCALE;
+      // активная бусина чуть крупнее и приподнята над нитью, парная — только ярче
+      const sc = active ? BEAD_SCALE * 1.12 : BEAD_SCALE;
+      beads[i].position.set(x, catY(x) + (active ? 0.3 : 0), active ? 0.2 : 0);
       beads[i].scale.set(sc, sc, 1);
       beads[i].material.color.copy(active || pair ? LIT : DIM);
     }

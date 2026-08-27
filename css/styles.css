@@ -87,6 +87,8 @@ body {
 .card h1 .ar { font-family: 'Amiri', serif; font-weight: 400; }
 .card .translation { font-size: 24px; margin-top: 2px; }
 .card .teaser { margin-top: 14px; color: var(--ink-soft); }
+.card .ref { color: #8a8699; white-space: nowrap; }
+#page .ref { color: rgba(255, 255, 255, 0.45); font-size: 14px; }
 .more {
   margin-top: 20px;
   display: inline-block;

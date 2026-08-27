@@ -1,16 +1,11 @@
 const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 
-const firstSentence = t => {
-  const m = t.match(/^.*?[.!?](?=\s|$)/);
-  return m ? m[0] : t;
-};
-
 export function renderCard(el, rec, onMore) {
   el.innerHTML = `<article class="card">
     <div class="badge">${rec.id}</div>
     <h1>${esc(rec.translit)} <span class="ar">(${rec.arabic})</span></h1>
     <div class="translation">${esc(rec.translations[0].text)}</div>
-    <p class="teaser">${esc(firstSentence(rec.tafsir))}</p>
+    <p class="teaser">${esc(rec.ayah.text)} <span class="ref">(${rec.ayah.ref})</span></p>
     <button class="more" type="button">Узнать больше</button>
   </article>`;
   el.querySelector('.more').addEventListener('click', onMore);
@@ -28,6 +23,10 @@ export function renderPage(el, rec, pair, { onClose, onGoPair }) {
       <div class="page-arabic">${rec.arabic}</div>
       <div class="page-translit">${esc(rec.translit)}</div>
       <div class="page-tr">${translations}</div>
+      <div class="page-section">
+        <h2>Аят</h2>
+        <p>«${esc(rec.ayah.text)}» <span class="ref">(${rec.ayah.ref}, пер. И. Ю. Крачковского)</span></p>
+      </div>
       <div class="page-section">
         <h2>Толкование</h2>
         <p>${esc(rec.tafsir)}</p>
