@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Аль-асма аль-хусна</title>
 <link rel="icon" href="data:,">
-<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 <script type="importmap">
 {
@@ -17,8 +17,22 @@
 </script>
 </head>
 <body>
+<video id="bg" src="assets/space-bg.mp4" autoplay muted loop playsinline></video>
+<div id="emblem" aria-hidden="true">
+  <svg class="star star-soft" viewBox="0 0 335.169 335.169">
+    <path d="M51.584 51.584H283.584V283.584H51.584V51.584Z" stroke="white" stroke-width="5" fill="none"/>
+    <path d="M167.584 3.536L331.633 167.584L167.584 331.633L3.536 167.584L167.584 3.536Z" stroke="white" stroke-width="5" fill="none"/>
+  </svg>
+  <svg class="star star-over" viewBox="0 0 335.169 335.169">
+    <path d="M51.584 51.584H283.584V283.584H51.584V51.584Z" stroke="white" stroke-width="5" fill="none"/>
+    <path d="M167.584 3.536L331.633 167.584L167.584 331.633L3.536 167.584L167.584 3.536Z" stroke="white" stroke-width="5" fill="none"/>
+  </svg>
+  <div class="glow"></div>
+  <div id="calligraphy" class="calligraphy"></div>
+</div>
 <canvas id="scene"></canvas>
-<main id="card" aria-live="polite"></main>
+<main id="card"></main>
+<section id="page" hidden></section>
 <script type="module" src="js/app.js"></script>
 </body>
 </html>

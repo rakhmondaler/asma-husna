@@ -1,13 +1,12 @@
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const TOTAL = 99;
-const SPACING = 0.8;
-const BEAD_R = 0.32;
+const SPACING = 1.9;
+const BEAD_SCALE = 1.86;
 const STRAND_Y = 1.6;
-const SAG = 2.2;
-const K = 14;
-const XCLAMP = 13;
+const SAG = 2.6;
+const K = 9;
+const XCLAMP = 14;
 
 // нить статична (катенарная кривая), бусины скользят вдоль неё
 const catY = x => {
@@ -15,73 +14,61 @@ const catY = x => {
   return STRAND_Y + SAG * (Math.cosh(xe / K) - 1);
 };
 
+// детерминированный псевдослучай по номеру бусины: вариант камня и поворот блика
+const variantOf = i => (i * 7 + 3) % 4;
+const rotationOf = i => (((i * 37) % 100) / 100 - 0.5) * (50 * Math.PI / 180);
+
 export function createBeadsScene(canvas, { onBeadClick }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-  camera.position.set(0, STRAND_Y - 2.2, 18);
-  camera.lookAt(0, STRAND_Y - 2.2, 0);
+  camera.position.set(0, STRAND_Y - 0.2, 18);
+  camera.lookAt(0, STRAND_Y - 0.2, 0);
 
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-
-  const key = new THREE.DirectionalLight(0xfff2dd, 2.2);
-  key.position.set(4, 8, 6);
-  scene.add(key);
-  scene.add(new THREE.AmbientLight(0x222233, 1.2));
-  const glow = new THREE.PointLight(0xffa03a, 6, 6);
-  scene.add(glow);
-
-  const amber = new THREE.MeshPhysicalMaterial({
-    color: 0xb35b12, roughness: 0.18, transmission: 0.55, thickness: 0.9,
-    ior: 1.5, clearcoat: 0.7, clearcoatRoughness: 0.2
+  const loader = new THREE.TextureLoader();
+  const beadMaps = [1, 2, 3, 4].map(n => {
+    const t = loader.load(`assets/beads/bead_${n}.png`);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
   });
-  const amberActive = amber.clone();
-  amberActive.emissive = new THREE.Color(0xff8c1e);
-  amberActive.emissiveIntensity = 0.7;
-  const amberPair = amber.clone();
-  amberPair.emissive = new THREE.Color(0xff8c1e);
-  amberPair.emissiveIntensity = 0.25;
+  const tasselMap = loader.load('assets/tassel.png');
+  tasselMap.colorSpace = THREE.SRGBColorSpace;
 
-  const beadGeo = new THREE.SphereGeometry(BEAD_R, 32, 32);
+  const DIM = new THREE.Color(0xc9c9c9);
+  const LIT = new THREE.Color(0xffffff);
+
   const beads = [];
-  for (let i = 1; i <= TOTAL; i++) {
-    const m = new THREE.Mesh(beadGeo, amber);
-    m.userData.id = i;
-    scene.add(m);
-    beads.push(m);
+  for (let i = 0; i < TOTAL; i++) {
+    const mat = new THREE.SpriteMaterial({
+      map: beadMaps[variantOf(i)],
+      rotation: rotationOf(i),
+      color: DIM.clone()
+    });
+    const s = new THREE.Sprite(mat);
+    s.scale.set(BEAD_SCALE, BEAD_SCALE, 1);
+    s.userData.id = i + 1;
+    scene.add(s);
+    beads.push(s);
   }
 
-  const sepGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.09, 24);
-  const woodMat = new THREE.MeshPhysicalMaterial({ color: 0x7a3c0a, roughness: 0.3, clearcoat: 0.5 });
-  const separators = [33.5, 66.5].map(s => {
-    const m = new THREE.Mesh(sepGeo, woodMat);
-    m.rotation.z = Math.PI / 2;
-    m.userData.s = s;
-    scene.add(m);
-    return m;
-  });
-
-  const tassel = new THREE.Group();
-  tassel.add(new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), woodMat));
-  for (let t = 0; t < 7; t++) {
-    const thread = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.015, 1.1, 6), woodMat);
-    thread.position.set(Math.cos(t) * 0.08, -0.75, Math.sin(t) * 0.08);
-    tassel.add(thread);
-  }
+  // кисточка стоит вверх от нити, колпачком к шнуру
+  const tassel = new THREE.Sprite(new THREE.SpriteMaterial({ map: tasselMap, rotation: Math.PI }));
+  const TASSEL_H = 3.4;
+  tassel.scale.set(TASSEL_H * (844 / 2224), TASSEL_H, 1);
   scene.add(tassel);
 
+  // шнур — тонкая тёмно-зелёная нить по кривой
   const pts = [];
-  for (let x = -XCLAMP; x <= XCLAMP; x += 0.5) pts.push(new THREE.Vector3(x, catY(x), 0));
+  for (let x = -XCLAMP; x <= XCLAMP; x += 0.5) pts.push(new THREE.Vector3(x, catY(x), -0.1));
   scene.add(new THREE.Mesh(
-    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 120, 0.045, 8),
-    new THREE.MeshStandardMaterial({ color: 0x2a1a0c, roughness: 0.8 })
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 120, 0.05, 8),
+    new THREE.MeshBasicMaterial({ color: 0x1c5a3a })
   ));
 
   // чётки замкнуты в кольцо: за 99-й бусиной, через зазор с кисточкой, снова первая
-  const GAP = 1.4;
+  const GAP = 1.6;
   const PERIOD = TOTAL + GAP;
   const circ = d => {
     d = ((d % PERIOD) + PERIOD) % PERIOD;
@@ -97,28 +84,20 @@ export function createBeadsScene(canvas, { onBeadClick }) {
     for (let i = 0; i < TOTAL; i++) {
       const x = circ(i - offset) * SPACING;
       beads[i].position.set(x, catY(x), 0);
-      beads[i].scale.setScalar(Math.abs(circ(i - target)) < 0.5 ? 1.45 : 1);
+      const active = Math.abs(circ(i - target)) < 0.5;
+      const pair = i + 1 === pairIdCur;
+      const sc = active ? BEAD_SCALE * 1.3 : pair ? BEAD_SCALE * 1.12 : BEAD_SCALE;
+      beads[i].scale.set(sc, sc, 1);
+      beads[i].material.color.copy(active || pair ? LIT : DIM);
     }
-    for (const sep of separators) {
-      const x = circ(sep.userData.s - 1 - offset) * SPACING;
-      sep.position.set(x, catY(x), 0);
-    }
-    const tx = circ(TOTAL + 0.2 - offset) * SPACING;
-    tassel.position.set(tx, catY(tx), 0);
-    glow.position.copy(beads[currentId - 1].position).add(new THREE.Vector3(0, 0, 1.2));
-  }
-
-  function applyMaterials() {
-    beads.forEach((b, i) => {
-      b.material = i + 1 === currentId ? amberActive : i + 1 === pairIdCur ? amberPair : amber;
-    });
+    const tx = circ(TOTAL - 1 + (GAP + 1) / 2 - offset) * SPACING;
+    tassel.position.set(tx, catY(tx) + TASSEL_H * 0.42, 0.1);
   }
 
   function setCurrent(id, pairId = null) {
     currentId = id;
     pairIdCur = pairId;
     target += circ(id - 1 - target);
-    applyMaterials();
   }
 
   function resize() {
