@@ -2,7 +2,8 @@ import * as THREE from 'three';
 
 const TOTAL = 99;
 const SPACING = 1.9;
-const BEAD_SCALE = 1.86;
+// в PNG бусины ~28% прозрачных полей: спрайт крупнее шага, чтобы камни почти касались
+const BEAD_SCALE = 2.58;
 const STRAND_Y = 1.6;
 const SAG = 2.6;
 const K = 9;
