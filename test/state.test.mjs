@@ -13,9 +13,9 @@ test('clamp держит индекс в 1..99', () => {
   assert.equal(clamp(42), 42);
 });
 
-test('next/prev не выходят за края', () => {
-  assert.equal(next(TOTAL), TOTAL);
-  assert.equal(prev(1), 1);
+test('next/prev идут по кругу', () => {
+  assert.equal(next(TOTAL), 1);
+  assert.equal(prev(1), TOTAL);
   assert.equal(next(1), 2);
   assert.equal(prev(3), 2);
 });

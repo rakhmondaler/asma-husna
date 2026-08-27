@@ -6,11 +6,11 @@ export function clamp(i) {
 }
 
 export function next(i) {
-  return clamp(i + 1);
+  return i % TOTAL + 1;
 }
 
 export function prev(i) {
-  return clamp(i - 1);
+  return (i + TOTAL - 2) % TOTAL + 1;
 }
 
 export function loadIndex(storage) {

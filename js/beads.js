@@ -80,6 +80,14 @@ export function createBeadsScene(canvas, { onBeadClick }) {
     new THREE.MeshStandardMaterial({ color: 0x2a1a0c, roughness: 0.8 })
   ));
 
+  // чётки замкнуты в кольцо: за 99-й бусиной, через зазор с кисточкой, снова первая
+  const GAP = 1.4;
+  const PERIOD = TOTAL + GAP;
+  const circ = d => {
+    d = ((d % PERIOD) + PERIOD) % PERIOD;
+    return d > PERIOD / 2 ? d - PERIOD : d;
+  };
+
   let target = 0;
   let offset = 0;
   let currentId = 1;
@@ -87,17 +95,17 @@ export function createBeadsScene(canvas, { onBeadClick }) {
 
   function layout() {
     for (let i = 0; i < TOTAL; i++) {
-      const x = (i - offset) * SPACING;
+      const x = circ(i - offset) * SPACING;
       beads[i].position.set(x, catY(x), 0);
-      beads[i].scale.setScalar(i === target ? 1.45 : 1);
+      beads[i].scale.setScalar(Math.abs(circ(i - target)) < 0.5 ? 1.45 : 1);
     }
     for (const sep of separators) {
-      const x = (sep.userData.s - 1 - offset) * SPACING;
+      const x = circ(sep.userData.s - 1 - offset) * SPACING;
       sep.position.set(x, catY(x), 0);
     }
-    const tx = (TOTAL + 0.7 - offset) * SPACING;
+    const tx = circ(TOTAL + 0.2 - offset) * SPACING;
     tassel.position.set(tx, catY(tx), 0);
-    glow.position.copy(beads[target].position).add(new THREE.Vector3(0, 0, 1.2));
+    glow.position.copy(beads[currentId - 1].position).add(new THREE.Vector3(0, 0, 1.2));
   }
 
   function applyMaterials() {
@@ -109,7 +117,7 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   function setCurrent(id, pairId = null) {
     currentId = id;
     pairIdCur = pairId;
-    target = id - 1;
+    target += circ(id - 1 - target);
     applyMaterials();
   }
 
