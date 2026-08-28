@@ -81,16 +81,22 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   let currentId = 1;
   let pairIdCur = null;
 
-  function layout() {
+  function layout(t) {
+    // активная бусина «дышит» яркостью и медленно вращает камень; парная — только ярче
+    const breath = 0.94 + 0.06 * Math.sin(t / 480);
     for (let i = 0; i < TOTAL; i++) {
       const x = circ(i - offset) * SPACING;
       const active = Math.abs(circ(i - target)) < 0.5;
       const pair = i + 1 === pairIdCur;
-      // активная бусина чуть крупнее и приподнята над нитью, парная — только ярче
       const sc = active ? BEAD_SCALE * 1.12 : BEAD_SCALE;
       beads[i].position.set(x, catY(x) + (active ? 0.3 : 0), active ? 0.2 : 0);
       beads[i].scale.set(sc, sc, 1);
-      beads[i].material.color.copy(active || pair ? LIT : DIM);
+      if (active) {
+        beads[i].material.color.setScalar(breath);
+        beads[i].material.rotation += 0.0025;
+      } else {
+        beads[i].material.color.copy(pair ? LIT : DIM);
+      }
     }
     const tx = circ(TOTAL - 1 + (GAP + 1) / 2 - offset) * SPACING;
     tassel.position.set(tx, catY(tx) + TASSEL_H * 0.42, 0.1);
@@ -120,9 +126,9 @@ export function createBeadsScene(canvas, { onBeadClick }) {
     if (hit) onBeadClick(hit.object.userData.id);
   });
 
-  renderer.setAnimationLoop(() => {
+  renderer.setAnimationLoop(t => {
     offset += (target - offset) * 0.07;
-    layout();
+    layout(t);
     renderer.render(scene, camera);
   });
 

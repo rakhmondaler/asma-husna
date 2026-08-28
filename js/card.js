@@ -32,6 +32,18 @@ export function renderPage(el, rec, pair, { onClose, onGoPair }) {
         <p>${esc(rec.tafsir)}</p>
       </div>
       <div class="page-section">
+        <h2>Тахаллук (уподобление)</h2>
+        <p>${esc(rec.takhalluq)}</p>
+      </div>
+      <div class="page-section">
+        <h2>Тень эго</h2>
+        <p>${esc(rec.shadow)}</p>
+      </div>
+      <div class="page-section">
+        <h2>Муракаба (созерцание)</h2>
+        <ul class="muraqaba">${rec.muraqaba.map(q => `<li>${esc(q)}</li>`).join('')}</ul>
+      </div>
+      <div class="page-section">
         <h2>Деталь</h2>
         <p>${esc(rec.fact)}</p>
       </div>

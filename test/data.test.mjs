@@ -22,6 +22,15 @@ test('у каждого имени есть аят с корректной сс�
   }
 });
 
+test('у каждого имени есть тахаллук, тень эго и три вопроса муракабы', () => {
+  for (const n of names) {
+    assert.ok(typeof n.takhalluq === 'string' && n.takhalluq.length >= 200, `${n.id}.takhalluq`);
+    assert.ok(typeof n.shadow === 'string' && n.shadow.length >= 80, `${n.id}.shadow`);
+    assert.ok(Array.isArray(n.muraqaba) && n.muraqaba.length === 3, `${n.id}.muraqaba`);
+    for (const q of n.muraqaba) assert.ok(q.trim().endsWith('?'), `${n.id}: вопрос без вопросительного знака`);
+  }
+});
+
 test('id уникальны', () => {
   const ids = names.map(n => n.id);
   assert.equal(new Set(ids).size, ids.length);
