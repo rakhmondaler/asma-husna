@@ -112,6 +112,8 @@ export function createBeadsScene(canvas, { onBeadClick }) {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
+    // на узких экранах камера отъезжает, чтобы в кадре оставалось ~7 бусин
+    camera.position.z = Math.min(42, Math.max(18, 21.6 / camera.aspect));
     camera.updateProjectionMatrix();
   }
   addEventListener('resize', resize);
