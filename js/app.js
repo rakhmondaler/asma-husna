@@ -47,6 +47,7 @@ addEventListener('keydown', e => {
 let acc = 0, cooldownUntil = 0;
 addEventListener('wheel', e => {
   if (!pageEl.hidden) return;
+  if (e.target.closest?.('#card')) return;
   const now = performance.now();
   if (now < cooldownUntil) return;
   acc += e.deltaY + e.deltaX;
