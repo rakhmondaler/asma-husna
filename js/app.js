@@ -122,4 +122,15 @@ addEventListener('pointerup', e => {
 
 go(current, { silent: true });
 
+// вход слоями: чётки после загрузки текстур, интерфейс следом; через 4с - принудительно
+let revealed = false;
+function reveal() {
+  if (revealed) return;
+  revealed = true;
+  document.body.classList.add('beads-in');
+  setTimeout(() => document.body.classList.add('ui-in'), 550);
+}
+scene.ready.then(reveal);
+setTimeout(reveal, 4000);
+
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');

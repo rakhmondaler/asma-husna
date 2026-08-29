@@ -28,7 +28,9 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   camera.position.set(0, STRAND_Y - 0.2, 18);
   camera.lookAt(0, STRAND_Y - 0.2, 0);
 
-  const loader = new THREE.TextureLoader();
+  const manager = new THREE.LoadingManager();
+  const ready = new Promise(res => { manager.onLoad = res; });
+  const loader = new THREE.TextureLoader(manager);
   const beadMaps = [1, 2, 3, 4].map(n => {
     const t = loader.load(`assets/beads/bead_${n}.webp`);
     t.colorSpace = THREE.SRGBColorSpace;
@@ -164,5 +166,5 @@ export function createBeadsScene(canvas, { onBeadClick }) {
     renderer.render(scene, camera);
   });
 
-  return { setCurrent };
+  return { setCurrent, ready };
 }
