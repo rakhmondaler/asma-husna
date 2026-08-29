@@ -56,10 +56,11 @@ export function createBeadsScene(canvas, { onBeadClick }) {
     beads.push(s);
   }
 
-  // кисточка стоит вверх от нити, колпачком к шнуру
+  // кисточка стоит вверх от нити; якорь вращения - в колпачке (точке крепления к шнуру)
   const tassel = new THREE.Sprite(new THREE.SpriteMaterial({ map: tasselMap, rotation: Math.PI }));
   const TASSEL_H = 3.4;
   tassel.scale.set(TASSEL_H * (844 / 2224), TASSEL_H, 1);
+  tassel.center.set(0.5, 1);
   scene.add(tassel);
 
   // шнур — кручёная нить: процедурная текстура прядей + свет для объёма
@@ -131,6 +132,8 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   let cursAmp = 0;
   const sparks = [];
   let nextSpark = 2000;
+  // маятник кисточки: раскачивается от листания, затухает пружиной
+  let swing = 0, swingV = 0, prevOffset = 0;
 
   function layout(t) {
     const breath = 0.94 + 0.06 * Math.sin(t / 480);
@@ -150,7 +153,7 @@ export function createBeadsScene(canvas, { onBeadClick }) {
 
     // деформация нити в точке x
     const dyStrand = x => {
-      let dy = 0.07 * Math.sin(x * 0.5 + t / 1400) + 0.045 * Math.sin(x * 1.15 - t / 900);
+      let dy = 0.04 * Math.sin(x * 0.5 + t / 1400) + 0.025 * Math.sin(x * 1.15 - t / 900);
       if (cursor && cursAmp > 0.01) {
         const dx = x - cursor.x;
         const dyc = catY(x) - cursor.y;
@@ -200,8 +203,13 @@ export function createBeadsScene(canvas, { onBeadClick }) {
         beads[i].material.color.copy(pair ? LIT : DIM).lerp(LIT, Math.min(1, inf * 0.8 + spark * 0.55));
       }
     }
+    const dOff = offset - prevOffset;
+    prevOffset = offset;
+    swingV += -swing * 0.014 - swingV * 0.055 - dOff * 0.55;
+    swing = Math.max(-0.55, Math.min(0.55, swing + swingV));
+    tassel.material.rotation = Math.PI + swing + 0.025 * Math.sin(t / 1300);
     const tx = circ(TOTAL - 1 + (GAP + 1) / 2 - offset) * SPACING;
-    tassel.position.set(tx, catY(tx) + dyStrand(tx) + TASSEL_H * 0.42, 0.1);
+    tassel.position.set(tx, catY(tx) + dyStrand(tx) + 0.08, 0.1);
   }
 
   function setCurrent(id, pairId = null) {
