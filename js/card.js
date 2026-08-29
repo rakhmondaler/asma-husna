@@ -43,10 +43,6 @@ export function renderPage(el, rec, pair, { onClose, onGoPair }) {
         <h2>Муракаба (созерцание)</h2>
         <ul class="muraqaba">${rec.muraqaba.map(q => `<li>${esc(q)}</li>`).join('')}</ul>
       </div>
-      <div class="page-section">
-        <h2>Деталь</h2>
-        <p>${esc(rec.fact)}</p>
-      </div>
       ${pair ? `<div class="page-section">
         <h2>Пара: ${esc(pair.translit)}</h2>
         ${pairText ? `<p>${esc(pairText)}</p>` : ''}

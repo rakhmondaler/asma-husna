@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тебе</title>
+<link rel="icon" href="assets/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; box-sizing: border-box; }
+body {
+  min-height: 100vh;
+  background: #05030f url('assets/space-poster.jpg') center / cover no-repeat fixed;
+  color: #fff;
+  font: 17px/1.65 'Inter', system-ui, sans-serif;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.veil { position: fixed; inset: 0; background: rgba(5, 3, 15, 0.55); }
+.gift {
+  position: relative;
+  max-width: 560px;
+  text-align: center;
+  animation: rise 1.4s ease both;
+}
+@keyframes rise { from { opacity: 0; translate: 0 18px; } }
+.star { width: 120px; height: 120px; margin: 0 auto 28px; opacity: 0.9; animation: spin 90s linear infinite; }
+@keyframes spin { to { rotate: 360deg; } }
+h1 { font-size: 30px; font-weight: 600; margin-bottom: 18px; }
+p { color: rgba(255, 255, 255, 0.82); margin-bottom: 14px; }
+.go {
+  display: inline-block;
+  margin-top: 26px;
+  background: #fff;
+  color: #17151f;
+  text-decoration: none;
+  padding: 15px 34px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+.hint { margin-top: 16px; font-size: 14px; color: rgba(255, 255, 255, 0.45); }
+</style>
+</head>
+<body>
+<div class="veil"></div>
+<main class="gift">
+  <svg class="star" viewBox="0 0 335.169 335.169">
+    <path d="M51.584 51.584H283.584V283.584H51.584V51.584Z" stroke="#c9b4ff" stroke-width="4" fill="none"/>
+    <path d="M167.584 3.536L331.633 167.584L167.584 331.633L3.536 167.584L167.584 3.536Z" stroke="#c9b4ff" stroke-width="4" fill="none"/>
+  </svg>
+  <h1>С днём рождения</h1>
+  <p>Этот подарок не завернуть в бумагу. Внутри - чётки: девяносто девять имён,
+  каждое со своим смыслом, своей практикой и своими вопросами к тебе.</p>
+  <p>Листай не спеша. Одного имени в день достаточно.</p>
+  <a class="go" href="./">Открыть чётки</a>
+  <div class="hint">Добавь на экран «Домой» - и они всегда будут с тобой, даже без интернета</div>
+</main>
+</body>
+</html>
