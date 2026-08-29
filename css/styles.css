@@ -32,10 +32,9 @@ body {
 /* звезда-стекло: фон просвечивает сквозь форму, тонированный лиловым */
 .star-veil {
   clip-path: polygon(98.90% 50.00%, 84.55% 64.31%, 84.58% 84.58%, 64.31% 84.55%, 50.00% 98.90%, 35.69% 84.55%, 15.42% 84.58%, 15.45% 64.31%, 1.10% 50.00%, 15.45% 35.69%, 15.42% 15.42%, 35.69% 15.45%, 50.00% 1.10%, 64.31% 15.45%, 84.58% 15.42%, 84.55% 35.69%);
-  background: #7833cb;
-  mix-blend-mode: overlay;
-  backdrop-filter: brightness(1.3) contrast(1.8) saturate(1.4) blur(1px);
-  -webkit-backdrop-filter: brightness(1.3) contrast(1.8) saturate(1.4) blur(1px);
+  background: rgba(84, 30, 160, 0.5);
+  backdrop-filter: brightness(1.6) contrast(1.6) saturate(1.4);
+  -webkit-backdrop-filter: brightness(1.6) contrast(1.6) saturate(1.4);
 }
 .star-line {
   opacity: 0.95;
