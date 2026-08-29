@@ -95,8 +95,10 @@ export function createBeadsScene(canvas, { onBeadClick }) {
 
   const pts = [];
   for (let x = -XCLAMP; x <= XCLAMP; x += 0.5) pts.push(new THREE.Vector3(x, catY(x), -0.1));
+  const tubeGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 160, 0.06, 12);
+  const tubeBase = tubeGeo.attributes.position.array.slice();
   scene.add(new THREE.Mesh(
-    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 160, 0.06, 12),
+    tubeGeo,
     new THREE.MeshStandardMaterial({ map: makeCordTexture(), roughness: 0.85, metalness: 0 })
   ));
 
@@ -124,36 +126,82 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   canvas.addEventListener('pointerleave', () => { cursor = null; });
   canvas.addEventListener('pointerup', () => { if (matchMedia('(hover: none)').matches) cursor = null; });
 
+  // нить - живой организм: дыхание (wobble), прогиб под курсором и под активной бусиной;
+  // бусины всегда сидят на нити и движутся вместе с ней
+  let cursAmp = 0;
+  const sparks = [];
+  let nextSpark = 2000;
+
   function layout(t) {
-    // активная бусина «дышит» яркостью и медленно вращает камень; парная — только ярче
     const breath = 0.94 + 0.06 * Math.sin(t / 480);
+    cursAmp += ((cursor ? 1 : 0) - cursAmp) * 0.08;
+    const activeX = circ(target - offset) * SPACING;
+
+    // случайный блик, пробегающий по бусинам
+    if (t > nextSpark) {
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      sparks.push({ x: dir > 0 ? -XCLAMP - 4 : XCLAMP + 4, dir, v: 7 + Math.random() * 6, t0: t });
+      nextSpark = t + 4000 + Math.random() * 6000;
+    }
+    for (let s = sparks.length - 1; s >= 0; s--) {
+      sparks[s].pos = sparks[s].x + sparks[s].dir * sparks[s].v * (t - sparks[s].t0) / 1000;
+      if (Math.abs(sparks[s].pos) > XCLAMP + 6) sparks.splice(s, 1);
+    }
+
+    // деформация нити в точке x
+    const dyStrand = x => {
+      let dy = 0.07 * Math.sin(x * 0.5 + t / 1400) + 0.045 * Math.sin(x * 1.15 - t / 900);
+      if (cursor && cursAmp > 0.01) {
+        const dx = x - cursor.x;
+        const dyc = catY(x) - cursor.y;
+        dy += cursAmp * 0.42 * Math.exp(-(dx * dx + dyc * dyc) / 2.4);
+      }
+      const da = x - activeX;
+      dy += 0.3 * Math.exp(-(da * da) / 1.1);
+      return dy;
+    };
+
+    // нить следует деформации: кольца трубки смещаются по своим базовым x
+    const pos = tubeGeo.attributes.position;
+    for (let v = 0; v < pos.count; v++) {
+      pos.array[v * 3 + 1] = tubeBase[v * 3 + 1] + dyStrand(tubeBase[v * 3]);
+    }
+    pos.needsUpdate = true;
+
     for (let i = 0; i < TOTAL; i++) {
       const x = circ(i - offset) * SPACING;
       const active = Math.abs(circ(i - target)) < 0.5;
       const pair = i + 1 === pairIdCur;
-      const base = catY(x);
+      const y = catY(x) + dyStrand(x);
 
-      // влияние курсора с гауссовым затуханием и пружинным сглаживанием
+      // отклик камня на курсор: масштаб и свет (позицию ведёт нить)
       let touch = 0;
       if (cursor) {
         const dx = x - cursor.x;
-        const dy = base - cursor.y;
-        touch = Math.exp(-(dx * dx + dy * dy) / 2.4);
+        const dyc = y - cursor.y;
+        touch = Math.exp(-(dx * dx + dyc * dyc) / 2.4);
       }
       const inf = beads[i].userData.inf = (beads[i].userData.inf ?? 0) + (touch - (beads[i].userData.inf ?? 0)) * 0.16;
 
+      // бегущий блик
+      let spark = 0;
+      for (const sp of sparks) {
+        const d = x - sp.pos;
+        spark += Math.exp(-(d * d) / 1.2);
+      }
+
       const sc = (active ? BEAD_SCALE * 1.12 : BEAD_SCALE) * (1 + inf * 0.06);
-      beads[i].position.set(x, base + inf * 0.42 + (active ? 0.3 : 0), active ? 0.2 : inf * 0.1);
+      beads[i].position.set(x, y, active ? 0.2 : inf * 0.1);
       beads[i].scale.set(sc, sc, 1);
       if (active) {
-        beads[i].material.color.setScalar(breath);
+        beads[i].material.color.setScalar(breath + spark * 0.12);
         beads[i].material.rotation += 0.0025;
       } else {
-        beads[i].material.color.copy(pair ? LIT : DIM).lerp(LIT, inf * 0.8);
+        beads[i].material.color.copy(pair ? LIT : DIM).lerp(LIT, Math.min(1, inf * 0.8 + spark * 0.55));
       }
     }
     const tx = circ(TOTAL - 1 + (GAP + 1) / 2 - offset) * SPACING;
-    tassel.position.set(tx, catY(tx) + TASSEL_H * 0.42, 0.1);
+    tassel.position.set(tx, catY(tx) + dyStrand(tx) + TASSEL_H * 0.42, 0.1);
   }
 
   function setCurrent(id, pairId = null) {
