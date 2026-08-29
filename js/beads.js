@@ -60,12 +60,42 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   tassel.scale.set(TASSEL_H * (844 / 2224), TASSEL_H, 1);
   scene.add(tassel);
 
-  // шнур — тонкая тёмно-зелёная нить по кривой
+  // шнур — кручёная нить: процедурная текстура прядей + свет для объёма
+  // (свет влияет только на шнур: спрайты бусин его игнорируют)
+  scene.add(new THREE.AmbientLight(0xffffff, 1.1));
+  const cordLight = new THREE.DirectionalLight(0xfff0e0, 1.6);
+  cordLight.position.set(2, 6, 8);
+  scene.add(cordLight);
+
+  function makeCordTexture() {
+    const c = document.createElement('canvas');
+    c.width = c.height = 64;
+    const g = c.getContext('2d');
+    g.fillStyle = '#123a26';
+    g.fillRect(0, 0, 64, 64);
+    // диагональные пряди кручёного шнура: тень, тело, блик
+    for (const [offset, color, width] of [[0, '#0c2a1b', 13], [5, '#1d5c3c', 9], [8, '#2f8557', 4]]) {
+      g.strokeStyle = color;
+      g.lineWidth = width;
+      for (let i = -2; i <= 6; i++) {
+        g.beginPath();
+        g.moveTo(i * 16 + offset - 32, 96);
+        g.lineTo(i * 16 + offset + 32, -32);
+        g.stroke();
+      }
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(90, 1.5);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }
+
   const pts = [];
   for (let x = -XCLAMP; x <= XCLAMP; x += 0.5) pts.push(new THREE.Vector3(x, catY(x), -0.1));
   scene.add(new THREE.Mesh(
-    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 120, 0.05, 8),
-    new THREE.MeshBasicMaterial({ color: 0x1c5a3a })
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 160, 0.06, 12),
+    new THREE.MeshStandardMaterial({ map: makeCordTexture(), roughness: 0.85, metalness: 0 })
   ));
 
   // чётки замкнуты в кольцо: за 99-й бусиной, через зазор с кисточкой, снова первая
