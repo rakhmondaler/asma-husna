@@ -60,7 +60,8 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   const tassel = new THREE.Sprite(new THREE.SpriteMaterial({ map: tasselMap, rotation: Math.PI }));
   const TASSEL_H = 3.4;
   tassel.scale.set(TASSEL_H * (844 / 2224), TASSEL_H, 1);
-  tassel.center.set(0.5, 1);
+  // в PNG кисточки 6% прозрачного поля сверху: якорь ставим на сам колпачок
+  tassel.center.set(0.5, 0.93);
   scene.add(tassel);
 
   // шнур — кручёная нить: процедурная текстура прядей + свет для объёма
@@ -205,11 +206,11 @@ export function createBeadsScene(canvas, { onBeadClick }) {
     }
     const dOff = offset - prevOffset;
     prevOffset = offset;
-    swingV += -swing * 0.014 - swingV * 0.055 - dOff * 0.55;
-    swing = Math.max(-0.55, Math.min(0.55, swing + swingV));
-    tassel.material.rotation = Math.PI + swing + 0.025 * Math.sin(t / 1300);
+    swingV += -swing * 0.018 - swingV * 0.07 - dOff * 0.34;
+    swing = Math.max(-0.4, Math.min(0.4, swing + swingV));
+    tassel.material.rotation = Math.PI + swing + 0.018 * Math.sin(t / 1300);
     const tx = circ(TOTAL - 1 + (GAP + 1) / 2 - offset) * SPACING;
-    tassel.position.set(tx, catY(tx) + dyStrand(tx) + 0.08, 0.1);
+    tassel.position.set(tx, catY(tx) + dyStrand(tx) + 0.02, 0.1);
   }
 
   function setCurrent(id, pairId = null) {
