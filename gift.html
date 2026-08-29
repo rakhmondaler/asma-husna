@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Тебе</title>
 <link rel="icon" href="assets/icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; box-sizing: border-box; }
 body {
@@ -21,12 +21,10 @@ body {
 .gift {
   position: relative;
   max-width: 560px;
-  text-align: center;
+  text-align: left;
   animation: rise 1.4s ease both;
 }
 @keyframes rise { from { opacity: 0; translate: 0 18px; } }
-.star { width: 120px; height: 120px; margin: 0 auto 28px; opacity: 0.9; animation: spin 90s linear infinite; }
-@keyframes spin { to { rotate: 360deg; } }
 h1 { font-size: 30px; font-weight: 600; margin-bottom: 18px; }
 p { color: rgba(255, 255, 255, 0.82); margin-bottom: 14px; }
 .go {
@@ -45,16 +43,17 @@ p { color: rgba(255, 255, 255, 0.82); margin-bottom: 14px; }
 <body>
 <div class="veil"></div>
 <main class="gift">
-  <svg class="star" viewBox="0 0 335.169 335.169">
-    <path d="M51.584 51.584H283.584V283.584H51.584V51.584Z" stroke="#c9b4ff" stroke-width="4" fill="none"/>
-    <path d="M167.584 3.536L331.633 167.584L167.584 331.633L3.536 167.584L167.584 3.536Z" stroke="#c9b4ff" stroke-width="4" fill="none"/>
-  </svg>
   <h1>С днём рождения</h1>
-  <p>Этот подарок не завернуть в бумагу. Внутри - чётки: девяносто девять имён,
-  каждое со своим смыслом, своей практикой и своими вопросами к тебе.</p>
-  <p>Листай не спеша. Одного имени в день достаточно.</p>
-  <a class="go" href="./">Открыть чётки</a>
-  <div class="hint">Добавь на экран «Домой» - и они всегда будут с тобой, даже без интернета</div>
+  <p>Дорогой Надир. Поздравляю тебя с новым витком вокруг Солнца!</p>
+  <p>Я глубоко благодарен за твое присутствие в моей жизни и всё, что ты делаешь
+  для меня, моей семьи и друзей. Мы недолго общаемся, но за это время я узнал тебя
+  как человека чистого совестью и намерениями, чаще более строгого к себе, чем
+  к остальным и регулярно стремящегося к совершенству.</p>
+  <p>Желаю, чтобы твой потенциал еще сильнее звучал в Вечности, а свет твоей души
+  сиял ярче и освещал путь остальным.</p>
+  <p>Надеюсь, этот подарок порадует тебя и окажется полезным. Всех благ!</p>
+  <a class="go" href="./">Открыть подарок</a>
+  <div class="hint">Добавь на экран «Домой» — подарок будет работать даже без интернета</div>
 </main>
 </body>
 </html>
