@@ -8,6 +8,22 @@ const canvas = document.getElementById('scene');
 const cardEl = document.getElementById('card');
 const pageEl = document.getElementById('page');
 const calligraphyEl = document.getElementById('calligraphy');
+const calligraphySpan = calligraphyEl.querySelector('span');
+
+// вязь вписывается в безопасную зону звезды: длинные составные имена ужимаются
+function setCalligraphy(text) {
+  calligraphySpan.textContent = text;
+  calligraphySpan.style.fontSize = '';
+  const safeW = calligraphyEl.clientWidth * 0.62;
+  const safeH = calligraphyEl.clientHeight * 0.58;
+  let size = parseFloat(getComputedStyle(calligraphyEl).fontSize);
+  for (let i = 0; i < 14; i++) {
+    const r = calligraphySpan.getBoundingClientRect();
+    if (r.width <= safeW && r.height <= safeH) break;
+    size *= 0.92;
+    calligraphySpan.style.fontSize = size + 'px';
+  }
+}
 
 const names = await (await fetch('data/names.json')).json();
 const byId = new Map(names.map(n => [n.id, n]));
@@ -37,7 +53,7 @@ function go(id, { silent = false } = {}) {
   saveIndex(localStorage, current);
   const rec = byId.get(current);
   scene.setCurrent(current, rec?.pairId ?? null);
-  calligraphyEl.textContent = rec.arabic;
+  setCalligraphy(rec.arabic);
   renderCard(cardEl, rec, openPage);
   if (changed && !silent) beadClick();
   if (!silent) dismissHint();
@@ -128,6 +144,9 @@ addEventListener('pointerup', e => {
 });
 
 go(current, { silent: true });
+
+// шрифт вязи грузится позже первого рендера - перемерить подгонку по его прибытии
+document.fonts?.ready.then(() => setCalligraphy(byId.get(current).arabic));
 
 // вход слоями: чётки после загрузки текстур, интерфейс следом; через 4с - принудительно
 let revealed = false;
