@@ -79,55 +79,66 @@ body.ui-in #hint { opacity: 1; transition-delay: 0.7s; }
   width: min(560px, calc(100vw - 32px));
   z-index: 3;
 }
+/* карточка в языке эмблемы: тёмное стекло с неоновой кромкой */
 .card {
   position: relative;
-  background: #fff;
-  color: var(--ink);
-  border-radius: 10px;
+  background: rgba(10, 6, 26, 0.66);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  color: #fff;
+  border: 1px solid rgba(170, 105, 245, 0.85);
+  border-radius: 12px;
   padding: 26px 30px 28px;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+  box-shadow:
+    0 0 22px rgba(140, 70, 240, 0.45),
+    inset 0 0 24px rgba(122, 60, 220, 0.14),
+    0 24px 70px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
 }
+/* бейдж — четверть руб аль-хизба, центр звезды в углу карточки */
 .badge {
   position: absolute;
   top: 0;
   right: 0;
-  min-width: 54px;
-  height: 54px;
-  display: grid;
-  place-items: center;
-  background: var(--violet);
+  width: 108px;
+  height: 108px;
+  clip-path: polygon(100% 0%, 100% 98%, 71.3% 69.2%, 30.7% 69.3%, 30.8% 28.7%, 2% 0%);
+  background: linear-gradient(135deg, #7b3cf0, #5b2bf0);
   color: #fff;
   font-weight: 600;
-  border-radius: 0 10px 0 10px;
+  font-size: 16px;
+  display: grid;
+  place-items: start end;
+  padding: 22px 26px 0 0;
 }
-.card h1 { font-size: 26px; line-height: 1.25; padding-right: 56px; }
+.card h1 { font-size: 26px; line-height: 1.25; padding-right: 62px; }
 .card h1 .ar { font-family: 'Amiri', serif; font-weight: 400; }
-.card .translation { font-size: 24px; margin-top: 2px; }
+.card .translation { font-size: 24px; margin-top: 2px; color: rgba(255, 255, 255, 0.92); }
 .card .teaser {
   margin-top: 14px;
-  color: var(--ink-soft);
+  color: rgba(255, 255, 255, 0.72);
   max-height: 6.2em;
   overflow-y: auto;
   padding-right: 10px;
   scrollbar-width: thin;
-  scrollbar-color: #cfcbdd transparent;
+  scrollbar-color: rgba(154, 85, 232, 0.5) transparent;
 }
 .card .teaser::-webkit-scrollbar { width: 5px; }
-.card .teaser::-webkit-scrollbar-thumb { background: #cfcbdd; border-radius: 3px; }
-.card .ref { color: #8a8699; white-space: nowrap; }
+.card .teaser::-webkit-scrollbar-thumb { background: rgba(154, 85, 232, 0.5); border-radius: 3px; }
+.card .ref { color: rgba(255, 255, 255, 0.45); white-space: nowrap; }
 #page .ref { color: rgba(255, 255, 255, 0.45); font-size: 14px; }
 .more {
   margin-top: 20px;
   display: inline-block;
-  background: var(--violet);
-  color: #fff;
+  background: #fff;
+  color: var(--ink);
   border: 0;
   padding: 12px 24px;
   border-radius: 10px;
   font: 600 15px/1 'Inter', system-ui, sans-serif;
   cursor: pointer;
 }
-.more:hover { filter: brightness(1.12); }
+.more:hover { filter: brightness(0.92); }
 
 /* меню: кнопка и панель всех имён */
 #menuBtn {
