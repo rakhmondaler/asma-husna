@@ -1,4 +1,4 @@
-const CACHE = 'asma-husna-v3';
+const CACHE = 'asma-husna-v4';
 // видео в предзагрузку не входит: его закэширует первый же просмотр (fetch-обработчик ниже)
 const CORE = [
   './',
@@ -13,6 +13,7 @@ const CORE = [
   'data/names.json',
   'manifest.json',
   'assets/vendor/three.module.js',
+  'assets/click.m4a',
   'assets/beads/bead_1.webp',
   'assets/beads/bead_2.webp',
   'assets/beads/bead_3.webp',

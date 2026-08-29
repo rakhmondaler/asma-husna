@@ -60,8 +60,8 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   const tassel = new THREE.Sprite(new THREE.SpriteMaterial({ map: tasselMap, rotation: Math.PI }));
   const TASSEL_H = 3.4;
   tassel.scale.set(TASSEL_H * (844 / 2224), TASSEL_H, 1);
-  // в PNG кисточки 6% прозрачного поля сверху: якорь ставим на сам колпачок
-  tassel.center.set(0.5, 0.93);
+  // якорь вращения - в центре колпачка: колпачок сидит на нити неподвижной втулкой, машет только кисть
+  tassel.center.set(0.5, 0.89);
   scene.add(tassel);
 
   // шнур — кручёная нить: процедурная текстура прядей + свет для объёма
@@ -105,7 +105,7 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   ));
 
   // чётки замкнуты в кольцо: за 99-й бусиной, через зазор с кисточкой, снова первая
-  const GAP = 1.6;
+  const GAP = 0.8;
   const PERIOD = TOTAL + GAP;
   const circ = d => {
     d = ((d % PERIOD) + PERIOD) % PERIOD;
@@ -206,11 +206,11 @@ export function createBeadsScene(canvas, { onBeadClick }) {
     }
     const dOff = offset - prevOffset;
     prevOffset = offset;
-    swingV += -swing * 0.018 - swingV * 0.07 - dOff * 0.34;
-    swing = Math.max(-0.4, Math.min(0.4, swing + swingV));
-    tassel.material.rotation = Math.PI + swing + 0.018 * Math.sin(t / 1300);
+    swingV += -swing * 0.022 - swingV * 0.085 - dOff * 0.2;
+    swing = Math.max(-0.18, Math.min(0.18, swing + swingV));
+    tassel.material.rotation = Math.PI + swing + 0.012 * Math.sin(t / 1300);
     const tx = circ(TOTAL - 1 + (GAP + 1) / 2 - offset) * SPACING;
-    tassel.position.set(tx, catY(tx) + dyStrand(tx) + 0.02, 0.1);
+    tassel.position.set(tx, catY(tx) + dyStrand(tx), 0.1);
   }
 
   function setCurrent(id, pairId = null) {

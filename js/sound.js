@@ -1,5 +1,7 @@
-// щелчок бусины: короткий деревянный тик через WebAudio, без аудиофайлов
+// щелчок бусины: живой сэмпл (камень) с вариацией высоты; до его загрузки - синтезированный тик
 let ctx = null;
+let clickBuf = null;
+let loading = false;
 
 function ensureCtx() {
   if (!ctx) {
@@ -8,6 +10,14 @@ function ensureCtx() {
     ctx = new AC();
   }
   if (ctx.state === 'suspended') ctx.resume();
+  if (!loading) {
+    loading = true;
+    fetch('assets/click.m4a')
+      .then(r => r.arrayBuffer())
+      .then(b => ctx.decodeAudioData(b))
+      .then(buf => { clickBuf = buf; })
+      .catch(() => {});
+  }
   return ctx;
 }
 
@@ -16,9 +26,7 @@ for (const ev of ['pointerdown', 'keydown', 'wheel', 'touchstart']) {
   addEventListener(ev, () => ensureCtx(), { once: true, passive: true });
 }
 
-export function beadClick() {
-  const c = ensureCtx();
-  if (!c || c.state !== 'running') return;
+function synthTick(c) {
   const t = c.currentTime;
   const osc = c.createOscillator();
   const gain = c.createGain();
@@ -31,5 +39,21 @@ export function beadClick() {
   osc.connect(gain).connect(c.destination);
   osc.start(t);
   osc.stop(t + 0.1);
+}
+
+export function beadClick() {
+  const c = ensureCtx();
+  if (!c || c.state !== 'running') return;
+  if (clickBuf) {
+    const src = c.createBufferSource();
+    src.buffer = clickBuf;
+    src.playbackRate.value = 0.92 + Math.random() * 0.16;
+    const gain = c.createGain();
+    gain.gain.value = 0.55;
+    src.connect(gain).connect(c.destination);
+    src.start();
+  } else {
+    synthTick(c);
+  }
   navigator.vibrate?.(8);
 }
