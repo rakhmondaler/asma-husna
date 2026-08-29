@@ -104,10 +104,13 @@ addEventListener('wheel', e => {
   }
 }, { passive: true });
 
-// свайп работает по всему экрану (кроме страницы имени); вертикальный жест - это прокрутка, не листание
+// свайпы: на десктопе - горизонтальные по всему экрану; на мобильном - вертикальные по сцене
+// (горизонтальный жест на iOS дёргает окно браузера: Safari читает его как «назад/вперёд»)
+const isMobile = () => matchMedia('(max-width: 640px)').matches;
 let px = null, py = null;
 addEventListener('pointerdown', e => {
   if (e.target.closest?.('#page, #menu, #menuBtn, #randomBtn')) { px = null; return; }
+  if (isMobile() && e.target.closest?.('.teaser')) { px = null; return; }
   px = e.clientX;
   py = e.clientY;
 });
@@ -117,7 +120,11 @@ addEventListener('pointerup', e => {
   const dx = e.clientX - px;
   const dy = e.clientY - py;
   px = null;
-  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? next(current) : prev(current));
+  if (isMobile()) {
+    if (Math.abs(dy) > 44 && Math.abs(dy) > Math.abs(dx) * 1.5) go(dy < 0 ? next(current) : prev(current));
+  } else {
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? next(current) : prev(current));
+  }
 });
 
 go(current, { silent: true });

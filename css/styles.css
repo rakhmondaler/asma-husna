@@ -229,6 +229,9 @@ body.ui-in #hint { opacity: 1; transition-delay: 0.7s; }
 @keyframes hint-in { from { opacity: 0; translate: -50% 10px; } }
 @media (max-width: 640px) {
   #hint { display: none; }
+  /* вертикальный свайп листает чётки даже с карточки; прокрутка живёт только в окне аята */
+  #card { touch-action: none; }
+  .card .teaser { touch-action: pan-y; }
 }
 
 /* полноэкранная страница имени */
