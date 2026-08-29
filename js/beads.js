@@ -113,6 +113,17 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   let currentId = 1;
   let pairIdCur = null;
 
+  // нить отзывается на курсор: ближние бусины приподнимаются и светлеют
+  let cursor = null;
+  canvas.addEventListener('pointermove', e => {
+    const nx = (e.clientX / canvas.clientWidth) * 2 - 1;
+    const ny = -(e.clientY / canvas.clientHeight) * 2 + 1;
+    const halfH = Math.tan(camera.fov * Math.PI / 360) * camera.position.z;
+    cursor = { x: nx * halfH * camera.aspect, y: camera.position.y + ny * halfH };
+  });
+  canvas.addEventListener('pointerleave', () => { cursor = null; });
+  canvas.addEventListener('pointerup', () => { if (matchMedia('(hover: none)').matches) cursor = null; });
+
   function layout(t) {
     // активная бусина «дышит» яркостью и медленно вращает камень; парная — только ярче
     const breath = 0.94 + 0.06 * Math.sin(t / 480);
@@ -120,14 +131,25 @@ export function createBeadsScene(canvas, { onBeadClick }) {
       const x = circ(i - offset) * SPACING;
       const active = Math.abs(circ(i - target)) < 0.5;
       const pair = i + 1 === pairIdCur;
-      const sc = active ? BEAD_SCALE * 1.12 : BEAD_SCALE;
-      beads[i].position.set(x, catY(x) + (active ? 0.3 : 0), active ? 0.2 : 0);
+      const base = catY(x);
+
+      // влияние курсора с гауссовым затуханием и пружинным сглаживанием
+      let touch = 0;
+      if (cursor) {
+        const dx = x - cursor.x;
+        const dy = base - cursor.y;
+        touch = Math.exp(-(dx * dx + dy * dy) / 2.4);
+      }
+      const inf = beads[i].userData.inf = (beads[i].userData.inf ?? 0) + (touch - (beads[i].userData.inf ?? 0)) * 0.16;
+
+      const sc = (active ? BEAD_SCALE * 1.12 : BEAD_SCALE) * (1 + inf * 0.06);
+      beads[i].position.set(x, base + inf * 0.42 + (active ? 0.3 : 0), active ? 0.2 : inf * 0.1);
       beads[i].scale.set(sc, sc, 1);
       if (active) {
         beads[i].material.color.setScalar(breath);
         beads[i].material.rotation += 0.0025;
       } else {
-        beads[i].material.color.copy(pair ? LIT : DIM);
+        beads[i].material.color.copy(pair ? LIT : DIM).lerp(LIT, inf * 0.8);
       }
     }
     const tx = circ(TOTAL - 1 + (GAP + 1) / 2 - offset) * SPACING;
