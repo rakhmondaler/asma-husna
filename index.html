@@ -11,7 +11,14 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#05030f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js">
+<link rel="preload" as="image" href="assets/beads/bead_1.webp">
+<link rel="preload" as="image" href="assets/beads/bead_2.webp">
+<link rel="preload" as="image" href="assets/beads/bead_3.webp">
+<link rel="preload" as="image" href="assets/beads/bead_4.webp">
 <link rel="stylesheet" href="css/styles.css">
 <script type="importmap">
 {
@@ -23,7 +30,10 @@
 </script>
 </head>
 <body>
-<video id="bg" src="assets/space-bg.mp4" autoplay muted loop playsinline></video>
+<video id="bg" poster="assets/space-poster.jpg" autoplay muted loop playsinline preload="auto"></video>
+<script>
+document.getElementById('bg').src = innerWidth <= 640 ? 'assets/space-bg-720.mp4' : 'assets/space-bg.mp4';
+</script>
 <div id="emblem" aria-hidden="true">
   <div class="star star-veil"></div>
   <svg class="star star-line" viewBox="0 0 335.169 335.169">

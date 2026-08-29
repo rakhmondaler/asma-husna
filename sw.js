@@ -1,4 +1,5 @@
-const CACHE = 'asma-husna-v1';
+const CACHE = 'asma-husna-v2';
+// видео в предзагрузку не входит: его закэширует первый же просмотр (fetch-обработчик ниже)
 const CORE = [
   './',
   'index.html',
@@ -11,12 +12,12 @@ const CORE = [
   'js/menu.js',
   'data/names.json',
   'manifest.json',
-  'assets/beads/bead_1.png',
-  'assets/beads/bead_2.png',
-  'assets/beads/bead_3.png',
-  'assets/beads/bead_4.png',
-  'assets/tassel.png',
-  'assets/space-bg.mp4'
+  'assets/beads/bead_1.webp',
+  'assets/beads/bead_2.webp',
+  'assets/beads/bead_3.webp',
+  'assets/beads/bead_4.webp',
+  'assets/tassel.webp',
+  'assets/space-poster.jpg'
 ];
 
 self.addEventListener('install', e => {

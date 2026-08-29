@@ -220,7 +220,7 @@ body {
 #hint.fade { opacity: 0; }
 @keyframes hint-in { from { opacity: 0; translate: -50% 10px; } }
 @media (max-width: 640px) {
-  #hint { white-space: normal; text-align: center; top: calc(2vh + 52vw + 12px); }
+  #hint { display: none; }
 }
 
 /* полноэкранная страница имени */

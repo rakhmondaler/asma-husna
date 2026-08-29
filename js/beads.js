@@ -30,11 +30,11 @@ export function createBeadsScene(canvas, { onBeadClick }) {
 
   const loader = new THREE.TextureLoader();
   const beadMaps = [1, 2, 3, 4].map(n => {
-    const t = loader.load(`assets/beads/bead_${n}.png`);
+    const t = loader.load(`assets/beads/bead_${n}.webp`);
     t.colorSpace = THREE.SRGBColorSpace;
     return t;
   });
-  const tasselMap = loader.load('assets/tassel.png');
+  const tasselMap = loader.load('assets/tassel.webp');
   tasselMap.colorSpace = THREE.SRGBColorSpace;
 
   const DIM = new THREE.Color(0xc9c9c9);
