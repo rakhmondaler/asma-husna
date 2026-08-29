@@ -113,6 +113,72 @@ body {
 }
 .more:hover { filter: brightness(1.12); }
 
+/* меню: кнопка и панель всех имён */
+#menuBtn {
+  position: fixed;
+  top: 20px;
+  left: 24px;
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(8, 4, 22, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+#menu {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  overflow-y: auto;
+  background: rgba(8, 4, 22, 0.86);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.menu-inner { max-width: 680px; margin: 0 auto; padding: 72px 24px 64px; }
+.menu-search {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 13px 16px;
+  color: #fff;
+  font: inherit;
+  outline: none;
+}
+.menu-search:focus { border-color: var(--pink); }
+.menu-search::placeholder { color: rgba(255, 255, 255, 0.4); }
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 24px;
+}
+.menu-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.menu-list li:hover { background: rgba(255, 255, 255, 0.07); }
+.menu-num { color: var(--pink); font-size: 12px; min-width: 22px; text-align: right; }
+.menu-name { font-weight: 600; }
+.menu-tr { color: rgba(255, 255, 255, 0.55); font-size: 13px; }
+.menu-empty { color: rgba(255, 255, 255, 0.45); grid-column: 1 / -1; }
+.menu-about { margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.12); padding-top: 24px; }
+.menu-about h2 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); margin-bottom: 10px; }
+.menu-about p { color: rgba(255, 255, 255, 0.8); }
+.menu-credits { margin-top: 12px; color: rgba(255, 255, 255, 0.45); font-size: 14px; }
+@media (max-width: 640px) { .menu-list { grid-template-columns: 1fr; } }
+
 /* онбординг-подсказка первого визита */
 #hint {
   position: fixed;

@@ -8,6 +8,7 @@ const CORE = [
   'js/card.js',
   'js/state.js',
   'js/sound.js',
+  'js/menu.js',
   'data/names.json',
   'manifest.json',
   'assets/beads/bead_1.png',

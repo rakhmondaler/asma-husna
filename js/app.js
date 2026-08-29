@@ -2,6 +2,7 @@ import { createBeadsScene } from './beads.js';
 import { renderCard, renderPage } from './card.js';
 import { loadIndex, saveIndex, next, prev, clamp } from './state.js';
 import { beadClick } from './sound.js';
+import { renderMenu } from './menu.js';
 
 const canvas = document.getElementById('scene');
 const cardEl = document.getElementById('card');
@@ -55,15 +56,37 @@ function dismissHint() {
   setTimeout(() => { hintEl.hidden = true; }, 600);
 }
 
+const menuEl = document.getElementById('menu');
+const menuBtn = document.getElementById('menuBtn');
+
+function openMenu() {
+  renderMenu(menuEl, names, {
+    onPick: id => { closeMenu(); go(id); },
+    onClose: closeMenu
+  });
+  menuEl.hidden = false;
+  menuEl.scrollTop = 0;
+}
+
+function closeMenu() {
+  menuEl.hidden = true;
+}
+
+menuBtn.addEventListener('click', openMenu);
+
 addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !pageEl.hidden) { closePage(); return; }
+  if (e.key === 'Escape') {
+    if (!menuEl.hidden) { closeMenu(); return; }
+    if (!pageEl.hidden) { closePage(); return; }
+  }
+  if (e.target.closest?.('#menu')) return;
   if (e.key === 'ArrowRight') go(next(current));
   if (e.key === 'ArrowLeft') go(prev(current));
 });
 
 let acc = 0, cooldownUntil = 0;
 addEventListener('wheel', e => {
-  if (!pageEl.hidden) return;
+  if (!pageEl.hidden || !menuEl.hidden) return;
   if (e.target.closest?.('#card')) return;
   const now = performance.now();
   if (now < cooldownUntil) return;
@@ -78,7 +101,7 @@ addEventListener('wheel', e => {
 // свайп работает по всему экрану (кроме страницы имени); вертикальный жест - это прокрутка, не листание
 let px = null, py = null;
 addEventListener('pointerdown', e => {
-  if (e.target.closest?.('#page')) { px = null; return; }
+  if (e.target.closest?.('#page') || e.target.closest?.('#menu') || e.target.closest?.('#menuBtn')) { px = null; return; }
   px = e.clientX;
   py = e.clientY;
 });
