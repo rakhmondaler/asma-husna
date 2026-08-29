@@ -31,6 +31,12 @@ test('у каждого имени есть тахаллук, тень эго и
   }
 });
 
+test('у каждого имени есть сеть ассоциаций для поиска', () => {
+  for (const n of names) {
+    assert.ok(Array.isArray(n.keywords) && n.keywords.length >= 5, `${n.id}.keywords`);
+  }
+});
+
 test('id уникальны', () => {
   const ids = names.map(n => n.id);
   assert.equal(new Set(ids).size, ids.length);

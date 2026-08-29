@@ -74,6 +74,12 @@ function closeMenu() {
 
 menuBtn.addEventListener('click', openMenu);
 
+document.getElementById('randomBtn').addEventListener('click', () => {
+  let id;
+  do { id = 1 + Math.floor(Math.random() * 99); } while (id === current);
+  go(id);
+});
+
 addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (!menuEl.hidden) { closeMenu(); return; }
@@ -101,7 +107,7 @@ addEventListener('wheel', e => {
 // свайп работает по всему экрану (кроме страницы имени); вертикальный жест - это прокрутка, не листание
 let px = null, py = null;
 addEventListener('pointerdown', e => {
-  if (e.target.closest?.('#page') || e.target.closest?.('#menu') || e.target.closest?.('#menuBtn')) { px = null; return; }
+  if (e.target.closest?.('#page, #menu, #menuBtn, #randomBtn')) { px = null; return; }
   px = e.clientX;
   py = e.clientY;
 });
