@@ -36,7 +36,7 @@ export function renderPage(el, rec, pair, { onClose, onGoPair }) {
         <p>${esc(rec.takhalluq)}</p>
       </div>
       <div class="page-section">
-        <h2>Тень эго</h2>
+        <h2>Тень эгоизма</h2>
         <p>${esc(rec.shadow)}</p>
       </div>
       <div class="page-section">
