@@ -40,6 +40,8 @@ MARKER_TO_HEADING = {
     "СНОСКА О СПИСКАХ": "Сноска о списках",
 }
 HEADING_TO_MARKER = {v: k for k, v in MARKER_TO_HEADING.items()}
+# синонимы заголовков, допустимые при ручной правке заметок
+HEADING_TO_MARKER["Интересные факты"] = FACT_MARKER
 
 PAIR_RE = re.compile(r"^ТЕКСТ ПАРЫ \((\d+)/(\d+)\)$")
 ENTRY_RE = re.compile(r"^### (\d+)\. (.+) \(([^()]+)\)\s*$")
@@ -283,6 +285,9 @@ def parse_note(path):
         if hm:
             flush()
             cur_heading = hm.group(1)
+            # служебные секции для ручной правки — в CONTENT.md не собираются
+            if cur_heading.endswith("(варианты)"):
+                cur_heading = None
             continue
         if cur_heading is not None:
             buf.append(line)

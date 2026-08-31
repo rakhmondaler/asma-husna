@@ -131,8 +131,6 @@ export function createBeadsScene(canvas, { onBeadClick }) {
   // нить - живой организм: дыхание (wobble), прогиб под курсором и под активной бусиной;
   // бусины всегда сидят на нити и движутся вместе с ней
   let cursAmp = 0;
-  const sparks = [];
-  let nextSpark = 2000;
   // маятник кисточки: раскачивается от листания, затухает пружиной
   let swing = 0, swingV = 0, prevOffset = 0;
 
@@ -140,17 +138,6 @@ export function createBeadsScene(canvas, { onBeadClick }) {
     const breath = 0.94 + 0.06 * Math.sin(t / 480);
     cursAmp += ((cursor ? 1 : 0) - cursAmp) * 0.08;
     const activeX = circ(target - offset) * SPACING;
-
-    // случайный блик, пробегающий по бусинам
-    if (t > nextSpark) {
-      const dir = Math.random() < 0.5 ? 1 : -1;
-      sparks.push({ x: dir > 0 ? -XCLAMP - 4 : XCLAMP + 4, dir, v: 7 + Math.random() * 6, t0: t });
-      nextSpark = t + 4000 + Math.random() * 6000;
-    }
-    for (let s = sparks.length - 1; s >= 0; s--) {
-      sparks[s].pos = sparks[s].x + sparks[s].dir * sparks[s].v * (t - sparks[s].t0) / 1000;
-      if (Math.abs(sparks[s].pos) > XCLAMP + 6) sparks.splice(s, 1);
-    }
 
     // деформация нити в точке x
     const dyStrand = x => {
@@ -187,21 +174,14 @@ export function createBeadsScene(canvas, { onBeadClick }) {
       }
       const inf = beads[i].userData.inf = (beads[i].userData.inf ?? 0) + (touch - (beads[i].userData.inf ?? 0)) * 0.16;
 
-      // бегущий блик
-      let spark = 0;
-      for (const sp of sparks) {
-        const d = x - sp.pos;
-        spark += Math.exp(-(d * d) / 1.2);
-      }
-
       const sc = (active ? BEAD_SCALE * 1.12 : BEAD_SCALE) * (1 + inf * 0.06);
       beads[i].position.set(x, y, active ? 0.2 : inf * 0.1);
       beads[i].scale.set(sc, sc, 1);
       if (active) {
-        beads[i].material.color.setScalar(breath + spark * 0.12);
+        beads[i].material.color.setScalar(breath);
         beads[i].material.rotation += 0.0025;
       } else {
-        beads[i].material.color.copy(pair ? LIT : DIM).lerp(LIT, Math.min(1, inf * 0.8 + spark * 0.55));
+        beads[i].material.color.copy(pair ? LIT : DIM).lerp(LIT, Math.min(1, inf * 0.8));
       }
     }
     const dOff = offset - prevOffset;
